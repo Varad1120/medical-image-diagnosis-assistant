@@ -6,8 +6,18 @@ Usage:
     python src/utils/trainer.py --config configs/config.yaml
 """
 
-import argparse
+import sys
 import os
+from pathlib import Path
+
+# Ensure project root is in path so 'src' package is importable
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(PROJECT_ROOT))
+
+# Force unbuffered stdout so logs appear immediately
+sys.stdout.reconfigure(line_buffering=True)
+
+import argparse
 import random
 import time
 from pathlib import Path
@@ -70,12 +80,14 @@ def build_dataloaders(config: dict):
         replacement=True,
     )
 
+    # pin_memory is not supported on MPS
+    pin_mem = torch.cuda.is_available()
     train_loader = DataLoader(
         train_dataset,
         batch_size=train_cfg["batch_size"],
         sampler=sampler,
         num_workers=data_cfg["num_workers"],
-        pin_memory=True,
+        pin_memory=pin_mem,
     )
     val_loader = DataLoader(
         val_dataset,
@@ -183,9 +195,14 @@ def evaluate(model, loader, criterion, device):
 # ── Main Training Loop ─────────────────────────────────────────────────────────
 def train(config: dict):
     set_seed(config["training"]["seed"])
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print(f"\n🚀 Training on: {device}")
-    print(f"📦 Model: {config['model']['name']}\n")
+    if torch.cuda.is_available():
+        device = torch.device("cuda")
+    elif torch.backends.mps.is_available():
+        device = torch.device("mps")
+    else:
+        device = torch.device("cpu")
+    print(f"\n🚀 Training on: {device}", flush=True)
+    print(f"📦 Model: {config['model']['name']}\n", flush=True)
 
     # Directories
     model_dir = Path("models")
@@ -299,7 +316,10 @@ def train(config: dict):
             "test_auc": test_metrics.get("auc_roc", 0),
             "test_f1": test_metrics.get("f1", 0),
         })
-        mlflow.pytorch.log_model(model, "model")
+        mlflow.pytorch.log_model(
+            model, "model",
+            serialization_format=mlflow.pytorch.SERIALIZATION_FORMAT_CLOUDPICKLE,
+        )
 
     print(f"\n🎉 Training complete! Best model saved to models/best_model.pth")
     print(f"   Best Val AUC-ROC: {best_val_auc:.4f}")
