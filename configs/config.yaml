@@ -1,0 +1,51 @@
+# Training Configuration
+training:
+  epochs: 30
+  batch_size: 32
+  learning_rate: 0.0001
+  weight_decay: 0.0001
+  patience: 7            # Early stopping patience
+  seed: 42
+
+# Model Configuration
+model:
+  name: "efficientnet_b3"  # Options: custom_cnn, resnet50, efficientnet_b3
+  num_classes: 2
+  pretrained: true
+  dropout: 0.3
+  freeze_backbone: false
+
+# Data Configuration
+data:
+  raw_dir: "data/raw/chest_xray"
+  processed_dir: "data/processed"
+  sample_dir: "data/sample_images"
+  image_size: 224
+  num_workers: 4
+  train_split: 0.8
+
+# Augmentation
+augmentation:
+  horizontal_flip: true
+  rotation_limit: 15
+  brightness_limit: 0.2
+  contrast_limit: 0.2
+  normalize_mean: [0.485, 0.456, 0.406]
+  normalize_std: [0.229, 0.224, 0.225]
+
+# MLflow
+mlflow:
+  experiment_name: "pneumonia-detection"
+  tracking_uri: "mlruns"
+
+# Paths
+paths:
+  model_dir: "models"
+  logs_dir: "logs"
+  reports_dir: "reports"
+
+# API
+api:
+  host: "0.0.0.0"
+  port: 8000
+  max_file_size_mb: 10
