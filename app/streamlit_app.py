@@ -145,9 +145,56 @@ with st.sidebar:
     st.markdown(f"**Device:** `{device}`")
 
 
-# ── Main Header ────────────────────────────────────────────────────────────────
+# ── Main Header / Landing Page ─────────────────────────────────────────────────
 st.markdown("# 🩺 Medical Image Diagnosis Assistant")
 st.markdown("### AI-Powered Pneumonia Detection from Chest X-Rays")
+
+st.markdown("""
+<div style="
+    background: linear-gradient(135deg, #1e293b, #0f172a);
+    border: 1px solid #334155;
+    border-radius: 16px;
+    padding: 20px 28px;
+    margin: 16px 0 24px 0;
+    font-family: 'Inter', sans-serif;
+">
+    <table style="width:100%; border-collapse:collapse; color:#e2e8f0;">
+        <tr>
+            <td style="padding:6px 0; font-size:1.05em;">
+                📌 <strong style="color:#94a3b8;">Project Topic</strong>
+            </td>
+            <td style="padding:6px 0; font-size:1.05em; color:#f1f5f9;">
+                AI-Powered Medical Image Diagnosis — Pneumonia Detection from Chest X-Rays
+            </td>
+        </tr>
+        <tr>
+            <td style="padding:6px 0; font-size:1.05em;">
+                👤 <strong style="color:#94a3b8;">Full Name</strong>
+            </td>
+            <td style="padding:6px 0; font-size:1.05em; color:#f1f5f9;">
+                Varad Sachin Kale
+            </td>
+        </tr>
+        <tr>
+            <td style="padding:6px 0; font-size:1.05em;">
+                📧 <strong style="color:#94a3b8;">Registered Email</strong>
+            </td>
+            <td style="padding:6px 0; font-size:1.05em; color:#f1f5f9;">
+                varadk1120@gmail.com
+            </td>
+        </tr>
+        <tr>
+            <td style="padding:6px 0; font-size:1.05em;">
+                🏫 <strong style="color:#94a3b8;">Program</strong>
+            </td>
+            <td style="padding:6px 0; font-size:1.05em; color:#f1f5f9;">
+                SparkIIT — ML with Python
+            </td>
+        </tr>
+    </table>
+</div>
+""", unsafe_allow_html=True)
+
 st.divider()
 
 # ── Load Model ─────────────────────────────────────────────────────────────────
@@ -177,7 +224,7 @@ if uploaded_file is not None:
 
     with col1:
         st.markdown("### 🔬 Original X-Ray")
-        st.image(image, use_column_width=True, caption=f"Uploaded: {uploaded_file.name}")
+        st.image(image, use_container_width=True, caption=f"Uploaded: {uploaded_file.name}")
 
     # Run prediction
     with st.spinner("🤖 Analyzing X-Ray..."):
@@ -236,11 +283,11 @@ if uploaded_file is not None:
 
             gcol1, gcol2, gcol3 = st.columns(3)
             with gcol1:
-                st.image(image, caption="Original", use_column_width=True)
+                st.image(image, caption="Original", use_container_width=True)
             with gcol2:
-                st.image(cam, caption="Grad-CAM Heatmap", use_column_width=True, clamp=True)
+                st.image(cam, caption="Grad-CAM Heatmap", use_container_width=True, clamp=True)
             with gcol3:
-                st.image(overlay, caption="Overlay", use_column_width=True)
+                st.image(overlay, caption="Overlay", use_container_width=True)
         except Exception as e:
             st.warning(f"Grad-CAM visualization skipped: {e}")
 
